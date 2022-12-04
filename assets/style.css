@@ -1,0 +1,75 @@
+body {
+    background-color: #000 !important;
+}
+
+.img-cap {
+    max-height: 300px;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: top;
+}
+
+.customFitImage {
+    object-fit: none !important;
+}
+
+.text-container {
+    height: 250px;
+}
+
+div.card {
+    padding: 0;
+    background-color: #fc0;
+    font-weight: 500;
+    box-shadow:
+        inset 0 0 25px #fff,
+        /* inner white */
+        inset 10px 0 40px rgb(254, 254, 72),
+        /* inner left magenta short */
+        inset -10px 0 40px rgb(254, 254, 72),
+        /* inner right cyan short */
+        inset 10px 0 150px rgb(254, 254, 72),
+        /* inner left magenta broad */
+        inset -10px 0 150px rgb(254, 254, 72),
+        /* inner right cyan broad */
+        0 0 25px #fff,
+        /* outer white */
+        -5px 0 40px #fc0,
+        /* outer left magenta */
+        5px 0 40px #fc0;
+}
+
+.card-subtitle {
+    color: rgb(61, 61, 61) !important;
+}
+
+.link-font {
+    font-size: 25px;
+}
+
+.flex-left {
+    flex: 0 0 10%;
+    height: 100%;
+    place-self: center;
+    text-decoration: none !important;
+}
+
+.flex-right {
+    flex: 0 0 80%;
+    height: 100%;
+    place-self: center;
+    margin-left: 5%;
+    font-size: 28px;
+    text-decoration: none !important;
+    margin-bottom: 2.5px;
+}
+
+.center-item {
+    place-self: center;
+}
+
+
+.bottomMargin {
+    margin-bottom: 125px
+}

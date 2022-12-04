@@ -1,0 +1,95 @@
+const CACHE_NAME = 'indoor-nursery-cache-v1';
+const DATA_CACHE_NAME = 'indoor-nursery-data-cache-v1';
+
+const FILES_TO_CACHE = [
+  "/",
+  "./index.html",
+  "./assets/style.css",
+  "./assets/script.js",
+  "./assets/images/favicon.ico",
+  "./assets/images/favicon-16x16.png",
+  "./assets/images/favicon-32x32.png",
+  "./assets/images/android-chrome-192x192.png",
+  "./assets/images/android-chrome-512x512.png",
+  "./assets/images/Aordos.webp",
+  "./assets/images/Mlozano.webp",
+  "./assets/images/Hullah.webp",
+  "./assets/images/Nleon.webp",
+  "./assets/documents/Automated Indoor Nursery Showcase.pdf",
+  "./assets/documents/CDR Progress Presentation.pdf",
+  "./assets/documents/Final Presentation.pdf",
+  "./assets/documents/Senior Design Conference Paper.pdf",
+  "./assets/documents/Middle Term Demo Group 10.pdf",
+  "manifest.json",
+];
+
+// Install the service worker
+self.addEventListener('install', function (evt) {
+  evt.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      console.log('Your files were pre-cached successfully!');
+      return cache.addAll(FILES_TO_CACHE);
+    })
+  );
+
+  self.skipWaiting();
+});
+
+// Activate the service worker and remove old data from the cache
+self.addEventListener('activate', function (evt) {
+  evt.waitUntil(
+    caches.keys().then(keyList => {
+      return Promise.all(
+        keyList.map(key => {
+          if (key !== CACHE_NAME && key !== DATA_CACHE_NAME) {
+            console.log('Removing old cache data', key);
+            return caches.delete(key);
+          }
+        })
+      );
+    })
+  );
+
+  self.clients.claim();
+});
+
+// Intercept fetch requests
+self.addEventListener('fetch', function (evt) {
+  if (evt.request.url.includes('/api/')) {
+    evt.respondWith(
+      caches
+        .open(DATA_CACHE_NAME)
+        .then(cache => {
+          return fetch(evt.request)
+            .then(response => {
+              // If the response was good, clone it and store it in the cache.
+              if (response.status === 200) {
+                cache.put(evt.request.url, response.clone());
+              }
+
+              return response;
+            })
+            .catch(err => {
+              // Network request failed, try to get it from the cache.
+              return cache.match(evt.request);
+            });
+        })
+        .catch(err => console.log(err))
+    );
+
+    return;
+  }
+
+  evt.respondWith(
+    fetch(evt.request).catch(function () {
+      return caches.match(evt.request).then(function (response) {
+        if (response) {
+          return response;
+        } else if (evt.request.headers.get('accept').includes('text/html')) {
+          // return the cached home page for all requests for html pages
+          return caches.match('/');
+        }
+      });
+    })
+  );
+});
